@@ -1,3 +1,9 @@
+<?php
+
+require("inc/connection.php");  // require uses so the script will not continue if we can't connect to the DB
+
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
