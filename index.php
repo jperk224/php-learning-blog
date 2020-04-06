@@ -9,22 +9,15 @@ include("inc/header.php");
         <section>
             <div class="container">
                 <div class="entry-list">
-                    <article>
-                        <h2><a href="detail.html">The best day I’ve ever had</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_2.html">The absolute worst day I’ve ever had</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_3.html">That time at the mall</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
-                    <article>
-                        <h2><a href="detail_4.html">Dude, where’s my car?</a></h2>
-                        <time datetime="2016-01-31">January 31, 2016</time>
-                    </article>
+                    <?php
+                        $journalEntries = getJournalEntries();
+                        foreach($journalEntries as $item) {
+                            echo "<article>\n";
+                            echo "<h2><a href=\"#\">" . $item["title"] . "</a></h2>\n";
+                            echo "<time datetime=\"" . $item["date"] . "\">" . $item["date"] . "</time>\n";
+                            echo "</article>\n";
+                        }
+                    ?>
                 </div>
             </div>
         </section>
