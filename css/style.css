@@ -225,16 +225,28 @@ input[type=submit] {
 	margin-right: 5px;
 }
 
+/* ==========================================================================
+   Paginator Styles
+   ========================================================================== */
 
+.pagination-links {
+	display: flex;
+	justify-content: flex-start;
+}
 
+.pagination-links p {
+	text-align: right;
+}
 
+.pagination-links ul {
+	display: flex;
+	justify-content: flex-start;
+	list-style: none;
+	padding-left: 5px;
+}
 
-
-
-
-
-
-
-
-
-
+.pagination-links ul li {
+	margin-left: 10px;
+	margin-right: 10px;
+	text-align: center;
+}
