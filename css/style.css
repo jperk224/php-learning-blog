@@ -226,12 +226,18 @@ input[type=submit] {
 }
 
 /* ==========================================================================
-   Paginator Styles
+   Paginator and Search Styles
    ========================================================================== */
+
+.entry-header {
+	display: flex;
+	justify-content: space-between;
+}
 
 .pagination-links {
 	display: flex;
 	justify-content: flex-start;
+	margin-bottom: 25px;
 }
 
 .pagination-links p {
@@ -249,4 +255,12 @@ input[type=submit] {
 	margin-left: 10px;
 	margin-right: 10px;
 	text-align: center;
+}
+
+.search-form label {
+	display: inline;
+}
+
+#search-box {
+	width: 200px;
 }
