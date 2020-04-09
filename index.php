@@ -42,23 +42,31 @@ if ($currentPage < 1) {
 <section>
     <div class="container">
         <div class="entry-list">
-            <div class="pagination-links">
-                <p>Page: </p>
-                <ul>
-                    <?php 
-                    // Display links for pagination
-                    // If page number link matches current page disable the link
-                        for($i = 1; $i <= $totalPages; $i++) {
-                            if($i == $currentPage) {
+            <div class="entry-header">
+                <div class="pagination-links">
+                    <p>Page: </p>
+                    <ul>
+                        <?php
+                        // Display links for pagination
+                        // If page number link matches current page disable the link
+                        for ($i = 1; $i <= $totalPages; $i++) {
+                            if ($i == $currentPage) {
                                 echo "<li>" . $i . "</li>";
-                            }
-                            else {
+                            } else {
                                 echo "<li><a href=\"index.php?page=" . $i . "\">" . $i . "</a></li>";
                             }
                         }
-                    ?>
-                </ul>
-            </div> <!-- end pagination-links -->
+                        ?>
+                    </ul>
+                </div> <!-- end pagination-links -->
+                <div class="search-form">
+                    <form action="index.php" method="get">
+                        <label for="search-box">Search: </label>
+                        <input type="text" id="search-box" name="searchQuery">
+                        <button class="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </form>
+                </div> <!-- end search-form -->
+            </div> <!-- end entry-header -->
             <?php
             $journalEntries = getJournalEntries($itemsPerPage, $offset);
             foreach ($journalEntries as $item) {

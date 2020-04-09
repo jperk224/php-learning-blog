@@ -23,10 +23,9 @@ function getJournalEntries($limit = null, $offset = 0) {
             $results->bindParam(1, $limit, PDO::PARAM_INT);
             $results->bindParam(2, $offset, PDO::PARAM_INT);
         }
+        // If no limit argument, return all values
         else {
-            $sql .= " OFFSET ?";
             $results = $db->prepare($sql);
-            $results->bindParam(1, $offset, PDO::PARAM_INT);
         }       
         $results->execute();
     }
