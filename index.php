@@ -102,7 +102,8 @@ if ($currentPage < 1) {
                 foreach ($journalEntries as $item) {
                     echo "<article>\n";
                     echo "<h2><a href=\"#\">" . $item["title"] . "</a></h2>\n";
-                    echo "<time datetime=\"" . $item["date"] . "\">" . $item["date"] . "</time>\n";
+                    // use data() and strtotime() to render fancy long date
+                    echo "<time datetime=\"" . $item["date"] . "\">" . date("F d, Y",strtotime($item["date"])) . "</time>\n";
                     echo "</article>\n";
                 }
             }
