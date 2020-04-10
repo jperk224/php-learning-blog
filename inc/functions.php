@@ -1,6 +1,8 @@
 <?php
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //---DATABASE FUNCTIONS---//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Pull entires from the database
 // TODO: Add use of limit and offet parameters for pagination
@@ -8,7 +10,7 @@ function getJournalEntries($limit = null, $offset = 0, $searchString = null) {
     try {
         include("inc/connection.php");  // include over require 
                                         // so we don't throw a fatal error and kill the whole page
-        $searchString = strtolower($searchString);
+        $searchString = strtolower($searchString);   // ignore case; maybe overkill b/c SQL LIKE ignores case
         $sql = "SELECT * FROM entries";
 
         // A prepare statment is used in lieu of $db->query b/c
@@ -20,35 +22,40 @@ function getJournalEntries($limit = null, $offset = 0, $searchString = null) {
         if(!empty($searchString)) {
             $searchString = "%" . $searchString . "%";  // SQL quotes automatically added by PDO per docs      
             $sql .= " WHERE title like :searchString1 
-                    OR learned like :searchString2 
-                    OR resources like :searchString3";
+                    OR learned like :searchString2";
 
             // If a limit is specified apped it to the SQL else just use the offset
             // if limit is an integer, we know one is passed in and its not null
             if(is_integer($limit)) {
+                // append order by date
+                $sql .= " ORDER BY `date` DESC";
                 $sql .= " LIMIT :limit OFFSET :offset";
                 $results = $db->prepare($sql);
                 $results->bindParam(':searchString1', $searchString, PDO::PARAM_STR);
                 $results->bindParam(':searchString2', $searchString, PDO::PARAM_STR);
-                $results->bindParam(':searchString3', $searchString, PDO::PARAM_STR);
                 $results->bindParam(':limit', $limit, PDO::PARAM_INT);
                 $results->bindParam(':offset', $offset, PDO::PARAM_INT);
             }
             else {  // No limit specified
+                // append order by date
+                $sql .= " ORDER BY `date` DESC";
                 $results = $db->prepare($sql);
                 $results->bindParam(':searchString1', $searchString, PDO::PARAM_STR);
                 $results->bindParam(':searchString2', $searchString, PDO::PARAM_STR);
-                $results->bindParam(':searchString3', $searchString, PDO::PARAM_STR);
             }
         }
         else {
             if(is_integer($limit)) {    // Limit but no search query
+                // append order by date
+                $sql .= " ORDER BY `date` DESC";
                 $sql .= " LIMIT :limit OFFSET :offset";
                 $results = $db->prepare($sql);
                 $results->bindParam(':limit', $limit, PDO::PARAM_INT);
                 $results->bindParam(':offset', $offset, PDO::PARAM_INT);
             }
             else {  // No limit or search query
+                // append order by date
+                $sql .= " ORDER BY `date` DESC";
                 $results = $db->prepare($sql);
             } 
         }
@@ -67,18 +74,17 @@ function getJournalEntries($limit = null, $offset = 0, $searchString = null) {
 // this function counts the number of entires in the entries table by id
 function getJournalEntryCount($searchString = null) {
     include("inc/connection.php");
+    $searchString = strtolower($searchString);
     try {
         $sql = "SELECT count(id)
                 FROM entries";
         if(!empty($searchString)) {
             $searchString = "%" . $searchString . "%";  // SQL quotes automatically added by PDO per docs      
             $sql .= " WHERE title LIKE :searchString1 
-                    OR learned LIKE :searchString2 
-                    OR resources LIKE :searchString3";
+                    OR learned LIKE :searchString2";
             $results = $db->prepare($sql);
             $results->bindParam(':searchString1', $searchString, PDO::PARAM_STR);
             $results->bindParam(':searchString2', $searchString, PDO::PARAM_STR);
-            $results->bindParam(':searchString3', $searchString, PDO::PARAM_STR);
         }
         else {
             $results = $db->prepare($sql);
@@ -96,7 +102,82 @@ function getJournalEntryCount($searchString = null) {
     return $count;
 }
 
+function getMaxJournalEntryId() {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT max(id)
+                FROM entries";
+        $results = $db->prepare($sql);
+        $results->execute();        
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+
+    $maxId = $results->fetchColumn(0);  
+
+    return $maxId;
+}
+
+function getMinJournalEntryId() {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT min(id)
+                FROM entries";
+        $results = $db->prepare($sql);
+        $results->execute();        
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+
+    $minId = $results->fetchColumn(0);  
+
+    return $minId;
+}
+
+// Retrieve a single joournal entry to render on the detials page
+function getJournalEntryById($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT *
+                FROM entries
+                WHERE id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();        
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+    
+    return $results->fetch(PDO::FETCH_ASSOC);   // fetch is used in lieu of fetchAll becasue 
+                                                // only one record should be returned, id is PRIMARY KEY
+}
+
+// Retrieve the journal entry resources to render on the details page
+function getJournalEntryResources($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT name, link
+                FROM resources
+                JOIN entry_resources
+                ON resources.id = entry_resources.resource_id
+                WHERE entry_resources.entry_id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+    return $results->fetchAll(PDO::FETCH_ASSOC);    // multiple records may be returned in the result set
+                                                    // and we'll need an array to iterate over in the UI
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--VIEW FUNCTIONS--//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function renderPaginationLinks($currentPage, $totalPages, $searchString = null)
 {
