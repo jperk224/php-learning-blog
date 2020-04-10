@@ -195,3 +195,18 @@ function renderPaginationLinks($currentPage, $totalPages, $searchString = null)
         }
     }
 }
+
+// Function to check whether the id passed in is valid (i.e. within the range of entry ids)
+// trypically used for the id passed in the query string to a page to determine whether
+// redirection is needed (i.e. if id is not valid, redirect...)
+function validEntryIdChecker($id) {
+    $minId = getMinJournalEntryId();
+    $maxId = getMaxJournalEntryId();
+    if (($id < $minId) || ($id > $maxId)) {
+        $validId = false;
+    }
+    else {
+        $validId = true;
+    }
+    return $validId;
+}
