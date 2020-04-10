@@ -68,6 +68,7 @@ if ($currentPage < 1) {
                     <p>Page: </p>
                     <ul>
                         <?php
+                        // FIXME: ADD Pagination arrows
                         if(!empty($searchQuery)) {
                         renderPaginationLinks($currentPage, $totalPages, $searchQuery);
                         }
@@ -101,7 +102,7 @@ if ($currentPage < 1) {
             if($totalJournalEntries > 0) {
                 foreach ($journalEntries as $item) {
                     echo "<article>\n";
-                    echo "<h2><a href=\"#\">" . $item["title"] . "</a></h2>\n";
+                    echo "<h2><a href=\"detail.php?id=" . $item["id"] . "\">" . $item["title"] . "</a></h2>\n";
                     // use data() and strtotime() to render fancy long date
                     echo "<time datetime=\"" . $item["date"] . "\">" . date("F d, Y",strtotime($item["date"])) . "</time>\n";
                     echo "</article>\n";
