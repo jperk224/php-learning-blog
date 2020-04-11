@@ -44,15 +44,17 @@ else {  // redirect home if the id is invalid
                     <p><?php echo $journalEntry["learned"]; ?></p>
                 </div>
                 <div class="entry">
-                    <h3>Resources to Remember:</h3>
-                    <ul>
-                        <?php
-                            $entryResources = getJournalEntryResources($id);
-                            foreach($entryResources as $resource) {
-                                echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
-                            }
-                        ?>
-                    </ul>
+                    <?php
+                        $entryResources = getJournalEntryResources($id);
+                        if(sizeof($entryResources) > 0) {
+                            echo "<h3>Resources to Remember:</h3>";
+                            echo "<ul>";
+                                foreach($entryResources as $resource) {
+                                    echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
+                                }
+                            echo "</ul>";
+                        }
+                    ?>
                 </div>
             </article>
         </div>

@@ -25,7 +25,6 @@ $resources = "";
 // POST logic -- assume successful POST!
 // filter form input before adding to the DB for safety!
 if($_SERVER["REQUEST_METHOD"] == "POST") {
-    echo "Your form posted... Congrats!!";
     $error_message = "";    // prep for errors...
     $title = trim(filter_input(INPUT_POST, "title", FILTER_SANITIZE_STRING));
     $timeSpent = trim(filter_input(INPUT_POST, "timeSpent", FILTER_SANITIZE_STRING));
@@ -61,6 +60,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_message = "Didn't you learn something? It's required.";
         }
     }
+    // NOTE: This is the only place unique journal title entries are currently enforced
+    elseif(!uniqueTitle($title)) {
+        $error_message = "Entry title already exists.  Title must be unique.";
+    }
+    else {
+        // Add the journal entry to the DB
+        if  (addJournalEntry($title, $date, $timeSpent, $whatILearned)) {  // returns true if journal entry added
+            header("location:index.php");
+        }
+        else {
+            $error_message = "Error adding journal entry.";
+        }
+    }
 }
 
 ?>
@@ -78,7 +90,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             <form method="post" action="new.php">
                 <label for="title">Title</label>
                 <input id="title" type="text" name="title"
-                value="<?php echo htmlspecialchars($title /*default escape , default encoding (UTF-8)*/); ?>"><br>
+                 value="<?php echo htmlspecialchars($title, ENT_NOQUOTES, 'UTF-8'); ?>"><br> <!-- TODO: ENT_NOQUOTES NOT working -->
                 <label for="date">Date</label>
                 <input id="date" type="date" name="date"
                 value="<?php echo htmlspecialchars($date /*default escape , default encoding (UTF-8)*/); ?>"><br>
@@ -90,7 +102,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="resources-to-remember">Resources to Remember</label>
                 <textarea id="resources-to-remember" rows="5" name="resourcesToRemember"><?php echo htmlspecialchars($resources /*default escape , default encoding (UTF-8)*/); ?></textarea>
                 <input type="submit" value="Publish Entry" class="button">
-                <a href="#" class="button button-secondary">Cancel</a>
+                <a href="index.php" class="button button-secondary">Cancel</a>
             </form>
         </div>
     </div>
