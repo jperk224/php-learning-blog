@@ -99,9 +99,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 value="<?php echo htmlspecialchars($timeSpent /*default escape , default encoding (UTF-8)*/); ?>"><br>
                 <label for="what-i-learned">What I Learned</label>
                 <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo htmlspecialchars($whatILearned /*default escape , default encoding (UTF-8)*/); ?></textarea>
-                <label for="resources-to-remember">Resources to Remember</label>
-                <textarea id="resources-to-remember" rows="5" name="resourcesToRemember"><?php echo htmlspecialchars($resources /*default escape , default encoding (UTF-8)*/); ?></textarea>
-                <input type="submit" value="Publish Entry" class="button">
+                <!-- <label for="resources-to-remember">Resources to Remember</label> -->
+                <!-- <textarea id="resources-to-remember" rows="5" name="resourcesToRemember"><?php echo htmlspecialchars($resources /*default escape , default encoding (UTF-8)*/); ?></textarea>
+                <input type="submit" value="Publish Entry" class="button"> -->
+                <fieldset>
+                    <legend>Resources To Remember</legend>
+                    <div id="resource-info">
+                        <div class="resource-name">
+                            <label for="resource1">Name: </label>
+                            <input type="text" id="resource1" name="resource1">
+                        </div>
+                        <div class="resource-link">
+                            <label for="resource-link1">Link: </label>
+                            <input type="text" id="resource-link1" name="resourceLink1">
+                        </div>
+                    </div>
+                </fieldset>
+                <br>
                 <a href="index.php" class="button button-secondary">Cancel</a>
             </form>
         </div>

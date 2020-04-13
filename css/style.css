@@ -260,7 +260,3 @@ input[type=submit] {
 .search-form label {
 	display: inline;
 }
-
-#search-box {
-	width: 200px;
-}
