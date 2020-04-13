@@ -20,7 +20,10 @@ $title = "";
 $date = "";
 $timeSpent = "";
 $whatILearned = "";
-$resources = "";
+$resources = array();
+
+// Expand/reduce resources to add with one-line code change
+// TODO: Make this adjustable via UI button for the user
 $resourceInputCount = 3;
 
 // POST logic -- assume successful POST!
@@ -31,10 +34,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $timeSpent = trim(filter_input(INPUT_POST, "timeSpent", FILTER_SANITIZE_STRING));
     $whatILearned = trim(filter_input(INPUT_POST, "whatILearned", FILTER_SANITIZE_STRING));
     $date = trim(filter_input(INPUT_POST, "date", FILTER_SANITIZE_STRING));
-    $resources = trim(filter_input(INPUT_POST, "resourcesToRemember", FILTER_SANITIZE_STRING));
 
-    // TODO: Resources...
-    // Resources aren't required...
+    // Create a nested array of resource name/link pairings to add to the DB
+    for($i = 0; $i < $resourceInputCount; $i++) {
+        $resource = "resource" . $i;
+        $link = "resourceLink" . $i;
+        $resourceName = trim(filter_input(INPUT_POST, $resource, FILTER_SANITIZE_STRING));
+        $resourceLink = trim(filter_input(INPUT_POST, $link, FILTER_SANITIZE_STRING));  
+        // TODO: This doesn't validate whether it's a valid link format ^^
+        $resources[] = [$resourceName, $resourceLink];
+    }
 
     // ensure the $date POSTed is valid, the date input box in the UI is not enough
     // date should be POSTed in YYYY-MM-DD format
@@ -105,23 +114,23 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <input type="submit" value="Publish Entry" class="button"> -->
                 <fieldset>
                     <legend>Resources To Remember</legend>
-                    <div id="resource-info">
                     <?php 
-                    for($i = 1; $i <= $resourceInputCount; $i ++) {
-                   
+                    for($i = 0; $i < $resourceInputCount; $i ++) {
+                    echo "<div id=\"resource-info\">\n";
                     echo "<div class=\"resource-name\">\n";
                     echo "<label for=\"resource" . $i . "\">Name: </label>\n";
                     echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\">\n";
                     echo "</div>\n";
                     echo "<div class=\"resource-link\">\n";
                     echo "<label for=\"resource-link" . $i . "\">Link: </label>\n";
-                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\">";
+                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\">\n";
+                    echo "</div>\n";
                     echo "</div>";
                     }
                     ?>
-                    </div>
                 </fieldset>
                 <br>
+                <input type="submit" value="Publish Entry" class="button">
                 <a href="index.php" class="button button-secondary">Cancel</a>
             </form>
         </div>
