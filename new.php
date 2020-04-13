@@ -21,6 +21,7 @@ $date = "";
 $timeSpent = "";
 $whatILearned = "";
 $resources = "";
+$resourceInputCount = 3;
 
 // POST logic -- assume successful POST!
 // filter form input before adding to the DB for safety!
@@ -105,14 +106,19 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <fieldset>
                     <legend>Resources To Remember</legend>
                     <div id="resource-info">
-                        <div class="resource-name">
-                            <label for="resource1">Name: </label>
-                            <input type="text" id="resource1" name="resource1">
-                        </div>
-                        <div class="resource-link">
-                            <label for="resource-link1">Link: </label>
-                            <input type="text" id="resource-link1" name="resourceLink1">
-                        </div>
+                    <?php 
+                    for($i = 1; $i <= $resourceInputCount; $i ++) {
+                   
+                    echo "<div class=\"resource-name\">\n";
+                    echo "<label for=\"resource" . $i . "\">Name: </label>\n";
+                    echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\">\n";
+                    echo "</div>\n";
+                    echo "<div class=\"resource-link\">\n";
+                    echo "<label for=\"resource-link" . $i . "\">Link: </label>\n";
+                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\">";
+                    echo "</div>";
+                    }
+                    ?>
                     </div>
                 </fieldset>
                 <br>
