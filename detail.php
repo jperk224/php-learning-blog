@@ -14,20 +14,15 @@ if (isset($_GET["id"])) {
     $id = 0;    // Set to zero to trigger NOT FOUND if coming from some other way
 }
 
-// Check whether the get request leads to a valid entry
-$validEntry = true;    // flag to indicate whether the current id is valid, assume it is to start
-$minId = getMinJournalEntryId();
-$maxId = getMaxJournalEntryId();
-if (($id < $minId) || ($id > $maxId)) {
-    $validEntry = false;
-}
+// Check whether the id passed in is valid
+$validEntry = validEntryIdChecker($id);
 
 // Set the current journal entry to render equal to the one tied to the id passed in
 if($validEntry) {
     $journalEntry = getJournalEntryById($id);
 }
-else {
-    header("location:index.php");   // redirect home
+else {  // redirect home if the id is invalid
+    header("location:index.php");   
 }
 
 ?>
@@ -49,24 +44,23 @@ else {
                     <p><?php echo $journalEntry["learned"]; ?></p>
                 </div>
                 <div class="entry">
-                    <h3>Resources to Remember:</h3>
-                    <ul>
-                        <?php
-                            $entryResources = getJournalEntryResources($id);
-                            foreach($entryResources as $resource) {
-                                echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
-                            }
-                        ?>
-                        <!-- <li><a href="">Lorem ipsum dolor sit amet</a></li>
-                        <li><a href="">Cras accumsan cursus ante, non dapibus tempor</a></li>
-                        <li>Nunc ut rhoncus felis, vel tincidunt neque</li>
-                        <li><a href="">Ipsum dolor sit amet</a></li> -->
-                    </ul>
+                    <?php
+                        $entryResources = getJournalEntryResources($id);
+                        if(sizeof($entryResources) > 0) {
+                            echo "<h3>Resources to Remember:</h3>";
+                            echo "<ul>";
+                                foreach($entryResources as $resource) {
+                                    echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
+                                }
+                            echo "</ul>";
+                        }
+                    ?>
                 </div>
             </article>
         </div>
     </div>
     <div class="edit">
+        <!-- TODO: Send the id to the edit page so form is pre-populated with existing info -->
         <p><a href="edit.php">Edit Entry</a></p>
     </div>
 </section>
