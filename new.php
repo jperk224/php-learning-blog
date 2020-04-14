@@ -21,6 +21,7 @@ $date = "";
 $timeSpent = "";
 $whatILearned = "";
 $resources = array();
+$resourceIds = array();
 
 // Expand/reduce resources to add with one-line code change
 // TODO: Make this adjustable via UI button for the user
@@ -43,6 +44,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $resourceLink = trim(filter_input(INPUT_POST, $link, FILTER_SANITIZE_STRING));  
         // TODO: This doesn't validate whether it's a valid link format ^^
         $resources[] = [$resourceName, $resourceLink];
+    }
+
+    // Resources array now holds resources from the POST, we need to check each one to see if it 
+    // already exists in the DB.  If it does, return the current id to add to the linking table,
+    // else, add it to the db, and get the resulting id to add to the linking table
+    // from here, output an array of resource ids that will be added to the linking table for this post
+
+    foreach($resources as $resource) {
+        // convert the resource into its unique Id and add it to the Id array
+        if(resourceExists($resource[1])) {
+            echo $resource[0] . " - In the DB!";
+        }
+        else {
+            echo $resource[0] . " - I am a new resource";
+        }
     }
 
     // ensure the $date POSTed is valid, the date input box in the UI is not enough
@@ -77,7 +93,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         // Add the journal entry to the DB
         if  (addJournalEntry($title, $date, $timeSpent, $whatILearned)) {  // returns true if journal entry added
-            header("location:index.php");
+            // add resources to the existing entry
         }
         else {
             $error_message = "Error adding journal entry.";
@@ -109,21 +125,36 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 value="<?php echo htmlspecialchars($timeSpent /*default escape , default encoding (UTF-8)*/); ?>"><br>
                 <label for="what-i-learned">What I Learned</label>
                 <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo htmlspecialchars($whatILearned /*default escape , default encoding (UTF-8)*/); ?></textarea>
-                <!-- <label for="resources-to-remember">Resources to Remember</label> -->
-                <!-- <textarea id="resources-to-remember" rows="5" name="resourcesToRemember"><?php echo htmlspecialchars($resources /*default escape , default encoding (UTF-8)*/); ?></textarea>
-                <input type="submit" value="Publish Entry" class="button"> -->
                 <fieldset>
                     <legend>Resources To Remember</legend>
                     <?php 
                     for($i = 0; $i < $resourceInputCount; $i ++) {
+                    // value attribute for form persistence
+                    if(count($resources) > 0) {
+                        $resourceName = $resources[$i][0];
+                        $resourceLink = $resources[$i][1];    
+                    }
+                    
                     echo "<div id=\"resource-info\">\n";
                     echo "<div class=\"resource-name\">\n";
                     echo "<label for=\"resource" . $i . "\">Name: </label>\n";
-                    echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\">\n";
+                    echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\"";
+                    if(isset($resourceName)) {
+                        echo "\" value=\"" . $resourceName . "\">\n";  
+                    } 
+                    else {
+                        echo ">\n"; 
+                    }
                     echo "</div>\n";
                     echo "<div class=\"resource-link\">\n";
                     echo "<label for=\"resource-link" . $i . "\">Link: </label>\n";
-                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\">\n";
+                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\""; 
+                    if(isset($resourceLink)) {
+                        echo "\" value=\"" . $resourceLink . "\">\n";  
+                    } 
+                    else {
+                        echo ">\n"; 
+                    }
                     echo "</div>\n";
                     echo "</div>";
                     }

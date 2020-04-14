@@ -244,8 +244,46 @@ function getIdByTitle($title) {
     return $results->fetchColumn(0);
 }
 
-// Add resources for an existing entry (i.e. take from form post)
+// check whether a resource (by link) already exists
+function resourceExists($link) {
+    include("inc/connection.php");
+    $link = strtolower($link);    // ignore case
+    try {
+        $sql = "SELECT id
+                FROM resources
+                WHERE LOWER(link) = :link";
+        $results = $db->prepare($sql);
+        $results->bindParam(':link', $link, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+    $count = $results->fetchColumn(0);
+    if ($count != 0) {  // resource exists (or something went awry?)
+        return true;
+    }
+    else {              // resource does not exist
+        return false;
+    }
+}
 
+// Get resource by link, if not found, add it to the DB
+// return the id
+function getResourceId($link) {
+    $resourceId = -1;           // this will hold the id returned
+    $isNew = true;              // assume the entry doesn't yet exist in the DB
+    include("inc/connection.php");
+    $link = strtolower($link);  // ignore case
+    try {
+
+    }
+    catch (Exception $e) {
+        echo $e->getMessage();
+    }
+}
+
+// Add resources for an existing entry (i.e. take from form post)
 
 // Delete resources for an existing entry (for the 'edit' entry workflow)
 
