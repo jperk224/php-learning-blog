@@ -298,6 +298,21 @@ fieldset legend {
     width: 250px;
 }
 
-.tag-block {
-	color: red;
+.tag-block,
+.tag-list {
+    display: flex;
+    justify-content: center;
+}
+
+.tag-list {
+    list-style: none;
+}
+
+.tag-list li {
+    margin-right: 10px;
+    /* font-size: .75em; */
+}
+
+.tag-list li a {
+    border-bottom: none;
 }

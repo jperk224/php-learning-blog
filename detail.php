@@ -50,6 +50,7 @@ else {  // redirect home if the id is invalid
                             echo "<h3>Resources to Remember:</h3>";
                             echo "<ul>";
                                 foreach($entryResources as $resource) {
+                                    // TODO: Render resources not as hyperlinks if no link associated
                                     echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
                                 }
                             echo "</ul>";

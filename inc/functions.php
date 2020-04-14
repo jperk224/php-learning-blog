@@ -337,6 +337,26 @@ function getResourceIdByName($name) {
     return $results->fetchColumn(0);
 }
 
+// Retrieve the journal entry tagss to render in the UI
+function getJournalEntryTags($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT name
+                FROM tags
+                JOIN entry_tags
+                ON tags.id = entry_tags.tag_id
+                WHERE entry_tags.entry_id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+    return $results->fetchAll(PDO::FETCH_ASSOC);    // multiple records may be returned in the result set
+                                                    // and we'll need an array to iterate over in the UI
+}
+
 // Delete resources for an existing entry (for the 'edit' entry workflow)
 
 

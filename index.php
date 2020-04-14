@@ -105,6 +105,18 @@ if ($currentPage < 1) {
                     echo "<h2><a href=\"detail.php?id=" . $item["id"] . "\">" . $item["title"] . "</a></h2>\n";
                     // use data() and strtotime() to render fancy long date
                     echo "<time datetime=\"" . $item["date"] . "\">" . date("F d, Y",strtotime($item["date"])) . "</time>\n";
+                    // find all tags associated with each journal entry item and render it
+                    $tags = getJournalEntryTags($item["id"]);
+                    if(count($tags) > 0) {
+                        echo "<div class=\"tag-block\">";
+                        // echo "<p>Tags: </p>\n";
+                        echo "<ul class=\"tag-list\">\n";
+                        foreach($tags as $tag) {
+                            echo "<li><a class=\"tag-link\" href=\"#\">#" . $tag["name"] . "</a></li>\n";
+                        }
+                        echo "</ul>\n";
+                        echo "</div>";
+                    }
                     echo "</article>\n";
                 }
             }

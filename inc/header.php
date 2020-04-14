@@ -15,7 +15,7 @@ require("inc/functions.php");   // no point continuing if we can't get our funct
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
         <link rel="stylesheet" href="css/normalize.css" type="text/css">
-        <link rel="stylesheet" href="css/style2.css" type="text/css">
+        <link rel="stylesheet" href="css/style3.css" type="text/css">
     </head>
     <body>
         <header>

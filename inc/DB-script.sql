@@ -24,6 +24,13 @@ CREATE TABLE resources(
 );
 ----------------------------------------------------------------
 
+-- Create the tags table
+CREATE TABLE tags(
+    id INTEGER NOT NULL PRIMARY KEY,
+    name VARCHAR(255)
+);
+----------------------------------------------------------------
+
 -- Create the entry-resources linking table
 CREATE TABLE entry_resources(
     entry_id INTEGER NOT NULL,
@@ -39,6 +46,23 @@ CREATE TABLE entry_resources(
     ON DELETE CASCADE
 );
 ----------------------------------------------------------------
+
+-- Create the entry-tags linking table
+CREATE TABLE entry_tags(
+    entry_id INTEGER NOT NULL,
+    tag_id INTEGER NOT NULL,
+    UNIQUE(entry_id, tag_id)
+    CONSTRAINT fk_column1
+    FOREIGN KEY (entry_id)
+    REFERENCES entries (id)
+    ON DELETE CASCADE,
+    CONSTRAINT fk_column2
+    FOREIGN KEY (tag_id)
+    REFERENCES tags (id)
+    ON DELETE CASCADE
+);
+----------------------------------------------------------------
+
 -- Add Test entries to the resources table
 INSERT INTO resources (name, link)
 VALUES
@@ -54,6 +78,24 @@ VALUES
 ("Java Tutorial","https://www.w3schools.com/java/default.asp");
 
 ----------------------------------------------------------------
+
+-- Add Test entries to the tags table
+INSERT INTO tags (name)
+VALUES
+("fun"),
+("excitement"),
+("php"),
+("design"),
+("ux"),
+("agile"),
+("sprint"),
+("responsiveDesign"),
+("javascript"),
+("JS"),
+("CSSnightmares");
+
+----------------------------------------------------------------
+
 -- Add test entires to entries
 INSERT INTO entries (title, date, time_spent, learned)
 VALUES
@@ -113,3 +155,47 @@ VALUES
 (4,1),
 (3,1),
 (2,1);
+
+----------------------------------------------------------------
+-- Add test entries to entry_tags linking table
+INSERT INTO entry_tags (entry_id, tag_id)
+VALUES
+(1,1),
+(1,2),
+(1,3),
+(2,4),
+(2,5),
+(2,6),
+(3,7),
+(4,8),
+(4,9),
+(4,10),
+(5,1),
+(5,2),
+(5,3),
+(6,1),
+(6,2),
+(7,3),
+(8,4),
+(8,5),
+(8,6),
+(8,7),
+(9,8),
+(10,9),
+(10,10),
+(11,11),
+(11,1),
+(12,2),
+(13,3),
+(15,4),
+(17,5),
+(19,6),
+(20,7),
+(21,8),
+(21,9),
+(21,10),
+(21,11),
+(22,1),
+(22,2),
+(23,3),
+(24,4);
