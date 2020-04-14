@@ -218,9 +218,6 @@ function addJournalEntry($title, $date, $timeSpent, $whatILearned) {
         echo $e->getMessage() . "<br>";
         return false;
     }
-
-    // TODO: Add resource adding capabilities (need to pull an array from the UI)
-
     return true;
 }
 
@@ -244,12 +241,48 @@ function getIdByTitle($title) {
     return $results->fetchColumn(0);
 }
 
+// Add a resource to the DB
+function addResource($name, $link) {
+    include("inc/connection.php");
+    try {
+        $sql = "INSERT INTO resources (name, link)
+                VALUES (:name, :link)";
+        $results = $db->prepare($sql);
+        $results->bindParam(':name', $name, PDO::PARAM_STR);
+        $results->bindParam(':link', $link, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
+
+// Add resources for an existing entry (i.e. take from form post)
+function addResourceToEntry($entryId, $resourceId) {
+    include("inc/connection.php");
+    try {
+        $sql = "INSERT INTO entry_resources (entry_id, resource_id)
+                VALUES (:entryId, :resourceId)";
+        $results = $db->prepare($sql);
+        $results->bindParam(':entryId', $entryId, PDO::PARAM_INT);
+        $results->bindParam(':resourceId', $resourceId, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
+
 // check whether a resource (by link) already exists
 function resourceExists($link) {
     include("inc/connection.php");
     $link = strtolower($link);    // ignore case
     try {
-        $sql = "SELECT id
+        $sql = "SELECT count(id)
                 FROM resources
                 WHERE LOWER(link) = :link";
         $results = $db->prepare($sql);
@@ -268,22 +301,41 @@ function resourceExists($link) {
     }
 }
 
-// Get resource by link, if not found, add it to the DB
-// return the id
-function getResourceId($link) {
-    $resourceId = -1;           // this will hold the id returned
-    $isNew = true;              // assume the entry doesn't yet exist in the DB
+// Get resource id by link
+function getResourceIdByLink($link) {
     include("inc/connection.php");
     $link = strtolower($link);  // ignore case
     try {
-
+        $sql = "SELECT id
+                FROM resources
+                WHERE LOWER(link) = :link";
+        $results = $db->prepare($sql);
+        $results->bindParam(':link', $link, PDO::PARAM_STR);
+        $results->execute();
     }
     catch (Exception $e) {
         echo $e->getMessage();
     }
+    return $results->fetchColumn(0);
 }
 
-// Add resources for an existing entry (i.e. take from form post)
+// Get resource id by name
+function getResourceIdByName($name) {
+    include("inc/connection.php");
+    $name = strtolower($name);  // ignore case
+    try {
+        $sql = "SELECT id
+                FROM resources
+                WHERE LOWER(name) = :name";
+        $results = $db->prepare($sql);
+        $results->bindParam(':name', $name, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch (Exception $e) {
+        echo $e->getMessage();
+    }
+    return $results->fetchColumn(0);
+}
 
 // Delete resources for an existing entry (for the 'edit' entry workflow)
 

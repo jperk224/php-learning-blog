@@ -53,11 +53,30 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
 
     foreach($resources as $resource) {
         // convert the resource into its unique Id and add it to the Id array
-        if(resourceExists($resource[1])) {
-            echo $resource[0] . " - In the DB!";
+        $id = -1;
+        // names don't have to be unique, but links do, so we'll check for uniqueness if there's a link
+        // there may be a name discrepency.  For now, keep the name currently in the DB
+        // TODO: Edit name for an existing link?
+        if(!empty($resource[1])) {
+            if(resourceExists($resource[1])) {
+                $id = getResourceIdByLink($resource[1]);
+            }        
+            else {
+                // Add the resource to the DB first if it's not null, then get the id
+                addResource($resource[0], $resource[1]);
+                $id = getResourceIdByLink($resource[1]);
+            }
         }
-        else {
-            echo $resource[0] . " - I am a new resource";
+        else {  // use the name to add the resource to the DB and get the id
+                // add the resouce to the DB by name
+            if(!empty($resource[0])) {
+                addResource($resource[0], $resource[1]);
+                $id = getResourceIdByName($resource[0]);
+            }
+        }
+        // add the id to the resource Id array if not -1
+        if($id != -1) {
+            $resourceIds[] = $id;
         }
     }
 
@@ -93,7 +112,28 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         // Add the journal entry to the DB
         if  (addJournalEntry($title, $date, $timeSpent, $whatILearned)) {  // returns true if journal entry added
-            // add resources to the existing entry
+            $addResource = true;
+            // get the journal entry by title
+            $entryId = getIdByTitle($title);
+
+            // add resources to the existing entry if there are resources to add
+            if(count($resourceIds) > 0) {
+                foreach($resourceIds as $id) {
+                    if (addResourceToEntry($entryId, $id)) {
+                        continue;
+                    }
+                    else {
+                        $error_message = "Error adding resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
+                        $addResource = false;
+                        break;
+                    }
+                }
+            }
+            
+            // if there was no error, redirect home
+            if($addResource) {  
+                header("location:index.php");
+            }            
         }
         else {
             $error_message = "Error adding journal entry.";
