@@ -18,11 +18,10 @@ if (isset($_GET["id"])) {
 $validEntry = validEntryIdChecker($id);
 
 // Set the current journal entry to render equal to the one tied to the id passed in
-if($validEntry) {
+if ($validEntry) {
     $journalEntry = getJournalEntryById($id);
-}
-else {  // redirect home if the id is invalid
-    header("location:index.php");   
+} else {  // redirect home if the id is invalid
+    header("location:index.php");
 }
 
 ?>
@@ -33,7 +32,18 @@ else {  // redirect home if the id is invalid
             <article>
                 <h1><?php echo $journalEntry["title"]; ?></h1>
                 <?php
-                echo "<time datetime=\"" . $journalEntry["date"] . "\">" . date("F d, Y",strtotime($journalEntry["date"])) . "</time>\n";
+                echo "<time datetime=\"" . $journalEntry["date"] . "\">" . date("F d, Y", strtotime($journalEntry["date"])) . "</time>\n";
+                $tags = getJournalEntryTags($journalEntry["id"]);
+                if (count($tags) > 0) {
+                    echo "<div class=\"tag-block\">";
+                    // echo "<p>Tags: </p>\n";
+                    echo "<ul class=\"tag-list\">\n";
+                    foreach ($tags as $tag) {
+                        echo "<li><a class=\"tag-link\" href=\"#\">#" . $tag["name"] . "</a></li>\n";
+                    }
+                    echo "</ul>\n";
+                    echo "</div>";
+                }
                 ?>
                 <div class="entry">
                     <h3>Time Spent: </h3>
@@ -45,16 +55,19 @@ else {  // redirect home if the id is invalid
                 </div>
                 <div class="entry">
                     <?php
-                        $entryResources = getJournalEntryResources($id);
-                        if(sizeof($entryResources) > 0) {
-                            echo "<h3>Resources to Remember:</h3>";
-                            echo "<ul>";
-                                foreach($entryResources as $resource) {
-                                    // TODO: Render resources not as hyperlinks if no link associated
-                                    echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
-                                }
-                            echo "</ul>";
+                    $entryResources = getJournalEntryResources($id);
+                    if (sizeof($entryResources) > 0) {
+                        echo "<h3>Resources to Remember:</h3>";
+                        echo "<ul>";
+                        foreach ($entryResources as $resource) {
+                            if (!empty($resource["link"])) {
+                                echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
+                            } else {
+                                echo "<li>" . $resource["name"] . "</li>";
+                            }
                         }
+                        echo "</ul>";
+                    }
                     ?>
                 </div>
             </article>
