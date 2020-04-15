@@ -5,7 +5,6 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Pull entires from the database
-// TODO: Add use of limit and offet parameters for pagination
 function getJournalEntries($limit = null, $offset = 0, $searchString = null) {
     try {
         include("inc/connection.php");  // include over require 
@@ -416,6 +415,23 @@ function getTagIdByName($tagName) {
     return $results->fetchColumn(0);
 }
 
+// Get tag name by id
+function getTag($tagId) {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT name
+                FROM tags
+                WHERE id = :tagId";
+        $results = $db->prepare($sql);
+        $results->bindParam(':tagId', $tagId, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch (Exception $e) {
+        echo $e->getMessage();
+    }
+    return $results->fetchColumn(0);
+}
+
 // Add tags for an existing entry (i.e. take from form post)
 function addTagToEntry($entryId, $tagId) {
     include("inc/connection.php");
@@ -432,6 +448,95 @@ function addTagToEntry($entryId, $tagId) {
         return false;
     }
     return true;
+}
+
+function getMaxTagId() {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT max(id)
+                FROM tags";
+        $results = $db->prepare($sql);
+        $results->execute();        
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+
+    $maxId = $results->fetchColumn(0);  
+
+    return $maxId;
+}
+
+function getMinTagId() {
+    include("inc/connection.php");
+    try {
+        $sql = "SELECT min(id)
+                FROM tags";
+        $results = $db->prepare($sql);
+        $results->execute();        
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+
+    $minId = $results->fetchColumn(0);  
+
+    return $minId;
+}
+
+// Pull entires from the database by tagId
+// tagId is captured from the query string when getting the tag-search page
+function getJournalEntriesByTagId($tagId, $limit = null, $offset = 0) {
+    try {
+        include("inc/connection.php");  
+        $sql = "SELECT * FROM entries
+                JOIN entry_tags ON entries.id = entry_tags.entry_id
+                WHERE entry_tags.tag_id = :tagId";
+
+        // If a limit is specified apped it to the SQL with the offset
+        // if limit is an integer, we know one is passed in and its not null
+        if (is_integer($limit)) {
+            // append order by date
+            $sql .= " ORDER BY `date` DESC";
+            $sql .= " LIMIT :limit OFFSET :offset";
+            $results = $db->prepare($sql);
+            $results->bindParam(':tagId', $tagId, PDO::PARAM_INT);
+            $results->bindParam(':limit', $limit, PDO::PARAM_INT);
+            $results->bindParam(':offset', $offset, PDO::PARAM_INT);
+        } else {  // No limit specified
+            // append order by date
+            $sql .= " ORDER BY `date` DESC";
+            $results = $db->prepare($sql);
+            $results->bindParam(':tagId', $tagId, PDO::PARAM_INT);
+        }
+        $results->execute();
+    }
+    catch (Exception $e) {
+        echo $e->getMessage();
+        die();          // kill the script if it can't pull from the DB 
+    }                   // and stop remainder of page from loading
+    
+    // return the results in an associative array so we can leverage column-named keys
+    return $results->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Count journal entries by tag
+function getJournalCountByTagId($tagId)
+{
+    try {
+        include("inc/connection.php");
+        $sql = "SELECT COUNT(id) FROM entries
+                JOIN entry_tags ON entries.id = entry_tags.entry_id
+                WHERE entry_tags.tag_id = :tagId";
+        $results = $db->prepare($sql);
+        $results->bindParam(':tagId', $tagId, PDO::PARAM_INT);
+        $results->execute();
+    } 
+    catch (Exception $e) {
+        echo $e->getMessage();
+    }
+        // return the count
+        return $results->fetchColumn(0);
 }
 
 // Delete resources for an existing entry (for the 'edit' entry workflow)
@@ -471,4 +576,18 @@ function validEntryIdChecker($id) {
         $validId = true;
     }
     return $validId;
+}
+
+// render tags in the UI
+function renderTags($arr)
+{
+
+    echo "<div class=\"tag-block\">";
+    echo "<ul class=\"tag-list\">\n";
+    foreach ($arr as $tag) {
+        $id = getTagIdByName($tag["name"]);
+        echo "<li><a class=\"tag-link\" href=\"tag-search.php?tagId=" . $id . "\">#" . $tag["name"] . "</a></li>\n";
+    }
+    echo "</ul>\n";
+    echo "</div>";
 }

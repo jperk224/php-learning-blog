@@ -35,14 +35,7 @@ if ($validEntry) {
                 echo "<time datetime=\"" . $journalEntry["date"] . "\">" . date("F d, Y", strtotime($journalEntry["date"])) . "</time>\n";
                 $tags = getJournalEntryTags($journalEntry["id"]);
                 if (count($tags) > 0) {
-                    echo "<div class=\"tag-block\">";
-                    // echo "<p>Tags: </p>\n";
-                    echo "<ul class=\"tag-list\">\n";
-                    foreach ($tags as $tag) {
-                        echo "<li><a class=\"tag-link\" href=\"#\">#" . $tag["name"] . "</a></li>\n";
-                    }
-                    echo "</ul>\n";
-                    echo "</div>";
+                    renderTags($tags);
                 }
                 ?>
                 <div class="entry">
