@@ -22,6 +22,9 @@ $timeSpent = "";
 $whatILearned = "";
 $resources = array();
 $resourceIds = array();
+$tags = "";
+$tagArray = array();
+$tagIds = array();
 
 // Expand/reduce resources to add with one-line code change
 // TODO: Make this adjustable via UI button for the user
@@ -35,6 +38,37 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $timeSpent = trim(filter_input(INPUT_POST, "timeSpent", FILTER_SANITIZE_STRING));
     $whatILearned = trim(filter_input(INPUT_POST, "whatILearned", FILTER_SANITIZE_STRING));
     $date = trim(filter_input(INPUT_POST, "date", FILTER_SANITIZE_STRING));
+    $tags = trim(filter_input(INPUT_POST, "tags", FILTER_SANITIZE_STRING));
+
+    // turn the tags into an array of elements that can be stored in the DB
+    // strip the # so as to store the tag w/o it
+    if(!empty($tags)) {
+        $tagsAsArray = explode(" ", $tags);
+        foreach($tagsAsArray as $tag) {
+            if($tag[0] == "#") {
+                $tag = substr($tag, 1); // remove the #
+            }
+            else {
+                $tag = $tag;
+            }
+            $tagArray[] = $tag;
+        }
+    }
+    
+    // check if the tag exists in the DB, if it does return the id, else add it, then grab
+    // the id to add to the tagId array that will be added to the linking table
+    if(count($tagArray) > 0) {
+        foreach($tagArray as $tag) {
+            if(tagExists($tag)) {
+                $tagId = getTagIdByName($tag);
+            }
+            else {
+                addTag($tag);
+                $tagId = getTagIdByName($tag);
+            }
+            $tagIds[] = $tagId;
+        }
+    }
 
     // Create a nested array of resource name/link pairings to add to the DB
     for($i = 0; $i < $resourceInputCount; $i++) {
@@ -129,6 +163,20 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                 }
             }
+
+            // add tags to the existing entry if there are tags to add
+            if(count($tagIds) > 0) {
+                foreach($tagIds as $id) {
+                    if (addTagToEntry($entryId, $id)) {
+                        continue;
+                    }
+                    else {
+                        $error_message = "Error adding resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
+                        $addResource = false;
+                        break;
+                    }
+                }
+            }
             
             // if there was no error, redirect home
             if($addResource) {  
@@ -177,7 +225,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     
                     echo "<div id=\"resource-info\">\n";
                     echo "<div class=\"resource-name\">\n";
-                    echo "<label for=\"resource" . $i . "\">Name: </label>\n";
+                    echo "<label for=\"resource" . $i . "\">Name</label>\n";
                     echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\"";
                     if(isset($resourceName)) {
                         echo "\" value=\"" . $resourceName . "\">\n";  
@@ -187,7 +235,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     }
                     echo "</div>\n";
                     echo "<div class=\"resource-link\">\n";
-                    echo "<label for=\"resource-link" . $i . "\">Link: </label>\n";
+                    echo "<label for=\"resource-link" . $i . "\">Link</label>\n";
                     echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\""; 
                     if(isset($resourceLink)) {
                         echo "\" value=\"" . $resourceLink . "\">\n";  
@@ -201,6 +249,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     ?>
                 </fieldset>
                 <br>
+                <label for="tag-input">Tags</label>
+                <textarea id="tags" rows="2" name="tags"><?php echo htmlspecialchars($tags); ?></textarea>
                 <input type="submit" value="Publish Entry" class="button">
                 <a href="index.php" class="button button-secondary">Cancel</a>
             </form>

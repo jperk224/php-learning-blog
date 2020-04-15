@@ -337,7 +337,7 @@ function getResourceIdByName($name) {
     return $results->fetchColumn(0);
 }
 
-// Retrieve the journal entry tagss to render in the UI
+// Retrieve the journal entry tags to render in the UI
 function getJournalEntryTags($id) {
     include("inc/connection.php");
     try {
@@ -355,6 +355,83 @@ function getJournalEntryTags($id) {
     }
     return $results->fetchAll(PDO::FETCH_ASSOC);    // multiple records may be returned in the result set
                                                     // and we'll need an array to iterate over in the UI
+}
+
+// check whether tag already exists in the DB
+function tagExists($tag) {
+    include("inc/connection.php");
+    $tag = strtolower($tag);    // ignore case
+    try {
+        $sql = "SELECT count(id)
+                FROM tags
+                WHERE LOWER(name) = :tag";
+        $results = $db->prepare($sql);
+        $results->bindParam(':tag', $tag, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage();
+    }
+    $count = $results->fetchColumn(0);
+    if ($count != 0) {  // tag exists
+        return true;
+    }
+    else {              // tag does not exist
+        return false;
+    }
+}
+
+// Add a tag to the DB
+function addTag($tagName) {
+    include("inc/connection.php");
+    try {
+        $sql = "INSERT INTO tags (name)
+                VALUES (:tagName)";
+        $results = $db->prepare($sql);
+        $results->bindParam(':tagName', $tagName, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
+
+// Get tag id by name
+function getTagIdByName($tagName) {
+    include("inc/connection.php");
+    $name = strtolower($tagName);  // ignore case
+    try {
+        $sql = "SELECT id
+                FROM tags
+                WHERE LOWER(name) = :tagName";
+        $results = $db->prepare($sql);
+        $results->bindParam(':tagName', $name, PDO::PARAM_STR);
+        $results->execute();
+    }
+    catch (Exception $e) {
+        echo $e->getMessage();
+    }
+    return $results->fetchColumn(0);
+}
+
+// Add tags for an existing entry (i.e. take from form post)
+function addTagToEntry($entryId, $tagId) {
+    include("inc/connection.php");
+    try {
+        $sql = "INSERT INTO entry_tags (entry_id, tag_id)
+                VALUES (:entryId, :tagId)";
+        $results = $db->prepare($sql);
+        $results->bindParam(':entryId', $entryId, PDO::PARAM_INT);
+        $results->bindParam(':tagId', $tagId, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
 }
 
 // Delete resources for an existing entry (for the 'edit' entry workflow)

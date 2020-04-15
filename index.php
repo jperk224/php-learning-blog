@@ -68,7 +68,7 @@ if ($currentPage < 1) {
                     <p>Page: </p>
                     <ul>
                         <?php
-                        // FIXME: ADD Pagination arrows
+                        // TODO: ADD Pagination arrows and limit count exposed for scpace constraints
                         if(!empty($searchQuery)) {
                         renderPaginationLinks($currentPage, $totalPages, $searchQuery);
                         }
