@@ -540,24 +540,43 @@ function getJournalCountByTagId($tagId)
 }
 
 // Delete resources for an existing entry (for the 'edit' entry workflow)
-
+function deleteJournalEntry($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "DELETE FROM entries
+                WHERE id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //--VIEW FUNCTIONS--//
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function renderPaginationLinks($currentPage, $totalPages, $searchString = null)
+function renderPaginationLinks($page, $currentPage, $totalPages, $tagId = null, $searchString = null)
 {
     // Display links for pagination
     // If page number link matches current page disable the link
+    // TODO: This will need to be modified if you ever add $searchString to tag-serach.php
     for ($i = 1; $i <= $totalPages; $i++) {
         if ($i == $currentPage) {
             echo "<li>" . $i . "</li>";
         } else {
             if (!empty($searchString)) {
-                echo "<li><a href=\"index.php?page=" . $i . "&searchQuery=" . $searchString . "\">" . $i . "</a></li>";
-            } else {
-                echo "<li><a href=\"index.php?page=" . $i . "\">" . $i . "</a></li>";
+                echo "<li><a href=\"" . $page . ".php?page=" . $i . "&searchQuery=" . $searchString . "\">" . $i . "</a></li>";
+            } 
+            elseif(!empty($tagId)) {
+                echo "<li><a href=\"" . $page . ".php?page=" . $i . "&tagId=" . $tagId . "\">" . $i . "</a></li>";
+            }
+            else {
+                echo "<li><a href=\"" . $page . ".php?page=" . $i . "\">" . $i . "</a></li>";
             }
         }
     }
@@ -569,7 +588,7 @@ function renderPaginationLinks($currentPage, $totalPages, $searchString = null)
 function validEntryIdChecker($id) {
     $minId = getMinJournalEntryId();
     $maxId = getMaxJournalEntryId();
-    if (($id < $minId) || ($id > $maxId)) {
+    if (($id < $minId) || ($id > $maxId) || !(getJournalEntryById($id))) {  // if there's no entry by that id should return false
         $validId = false;
     }
     else {

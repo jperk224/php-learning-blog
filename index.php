@@ -70,10 +70,10 @@ if ($currentPage < 1) {
                         <?php
                         // TODO: ADD Pagination arrows and limit count exposed for scpace constraints
                         if(!empty($searchQuery)) {
-                        renderPaginationLinks($currentPage, $totalPages, $searchQuery);
+                        renderPaginationLinks("index", $currentPage, $totalPages, $searchQuery);
                         }
                         else {
-                        renderPaginationLinks($currentPage, $totalPages);
+                        renderPaginationLinks("index", $currentPage, $totalPages);
                         }
                         ?>
                     </ul>

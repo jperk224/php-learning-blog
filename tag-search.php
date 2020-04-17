@@ -2,8 +2,6 @@
 
 $pageTitle = "My Journal | #tagSearch";
 $itemsPerPage = 5;  // fixed count for display pagination
-$searchQuery = '';  // to drive search results, if set results returned will
-                    // match SQL 'like'
 
 include("inc/header.php");
 
@@ -17,7 +15,7 @@ if(isset($_GET["tagId"])) {
 
 $tag = getTag($tagId);
 
-// redirect home if the tagId provided is out of the range of tags or tag doesn't exists
+// redirect home if the tagId provided is out of the range of tags or tag doesn't exist
 $maxTagId = getMaxTagId();
 $minTagId = getMinTagId();
 if((empty($tag)) || ($tagId < $minTagId) || ($tagId > $maxTagId)) {
@@ -37,7 +35,6 @@ if (empty($currentPage)) {
 }
 
 $totalJournalEntries = getJournalCountByTagId($tagId);
-var_dump($totalJournalEntries);
 
 // determine total pages, round up to ensure there's enough pages to paginate over
 // total journal entries is 0 if the search query returns no results, so
@@ -68,32 +65,19 @@ if ($currentPage < 1) {
 <section>
     <div class="container">
         <div class="entry-list">
-            <!-- <div class="entry-header"> -->
-                <!-- <div class="pagination-links">
+            <div class="entry-header">
+                <div class="pagination-links">
                     <p>Page: </p>
-                    <ul> -->
+                    <ul>
                         <?php
                         // TODO: ADD Pagination arrows and limit count exposed for scpace constraints
-                        // if(!empty($searchQuery)) {
-                        // renderPaginationLinks($currentPage, $totalPages, $searchQuery);
-                        // }
-                        // else {
-                        // renderPaginationLinks($currentPage, $totalPages);
-                        // }
+                        renderPaginationLinks("tag-search", $currentPage, $totalPages, $tagId);
                         ?>
-                    <!-- </ul> -->
-                <!-- </div> end pagination-links -->
-                <!-- <div class="search-form">
-                    <form action="index.php" method="get">
-                        <label for="search-box">Search: </label>
-                        <input type="text" id="search-box" name="searchQuery">
-                        <button class="button"><i class="fa fa-search" aria-hidden="true"></i></button>
-                    </form>
-                </div> end search-form -->
-            <!-- </div> end entry-header -->
+                    </ul>
+                </div> <!-- end pagination-links -->
+            </div> <!-- end entry-header -->
             <?php
-            // If search query, show only entries returned from search query
-            
+
             $journalEntries = getJournalEntriesByTagId($tagId, $itemsPerPage, $offset);
             
             // if there are results to render total journal entries will be greater than 0

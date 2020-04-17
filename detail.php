@@ -68,7 +68,16 @@ if ($validEntry) {
     </div>
     <div class="edit">
         <!-- TODO: Send the id to the edit page so form is pre-populated with existing info -->
-        <p><a href="edit.php">Edit Entry</a></p>
+        <!-- <p><a href="edit.php">Edit Entry</a></p> -->
+        <div class="entry-buttons">
+            <form action="edit.php?id=<?php echo $id; ?>" method="post">
+                <button class="button">Edit Entry</button>
+            </form>
+            <br>            
+            <form action="#" method=post>
+                <button class="button">Delete Entry</button>
+            </form>
+        </div>
     </div>
 </section>
 
