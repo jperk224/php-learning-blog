@@ -34,15 +34,8 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
     $journalEntry = getJournalEntryById($journalId);
     $title = $journalEntry["title"];
     $timeSpent = $journalEntry["time_spent"];
-    // $dateArray = explode("-", $journalEntry["date"]);
-    // var_dump($dateArray);
-    // $newDateArray = array();
-    // $newDateArray[] = $dateArray[1];    // month
-    // $newDateArray[] = $dateArray[2];    // day
-    // $newDateArray[] = $dateArray[0];    // year
-    // $date = implode("/", $newDateArray);
-    // var_dump($date);
     $whatILearned = $journalEntry["learned"];
+    $date = $journalEntry["date"];
     
     // get the existing resources to render in the UI
     $resourceArray = getJournalEntryResources($journalId);
@@ -58,7 +51,6 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
     // get the existing tags to render in the UI
     $existingTags = getJournalEntryTags($journalId);
     $tagStringArray = array();
-    var_dump($existingTags);
     foreach($existingTags as $tag) {
         $tagStringArray[] = $tag["name"];
     }
