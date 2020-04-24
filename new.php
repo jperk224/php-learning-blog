@@ -217,34 +217,39 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     <legend>Resources To Remember</legend>
                     <?php 
                     for($i = 0; $i < $resourceInputCount; $i ++) {
-                    // value attribute for form persistence
-                    if(count($resources) > 0) {
-                        $resourceName = $resources[$i][0];
-                        $resourceLink = $resources[$i][1];    
-                    }
-                    
-                    echo "<div id=\"resource-info\">\n";
-                    echo "<div class=\"resource-name\">\n";
-                    echo "<label for=\"resource" . $i . "\">Name</label>\n";
-                    echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\"";
-                    if(isset($resourceName)) {
-                        echo "\" value=\"" . $resourceName . "\">\n";  
-                    } 
-                    else {
-                        echo ">\n"; 
-                    }
-                    echo "</div>\n";
-                    echo "<div class=\"resource-link\">\n";
-                    echo "<label for=\"resource-link" . $i . "\">Link</label>\n";
-                    echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\""; 
-                    if(isset($resourceLink)) {
-                        echo "\" value=\"" . $resourceLink . "\">\n";  
-                    } 
-                    else {
-                        echo ">\n"; 
-                    }
-                    echo "</div>\n";
-                    echo "</div>";
+                        // value attribute for form persistence
+                        // value attribute for form persistence
+                        if(isset($resources[$i])) {
+                            $resourceName = $resources[$i][0];
+                            $resourceLink = $resources[$i][1];    
+                        }
+                        else {
+                            $resourceName = "";
+                            $resourceLink = "";    
+                        }
+                        
+                        echo "<div id=\"resource-info\">\n";
+                        echo "<div class=\"resource-name\">\n";
+                        echo "<label for=\"resource" . $i . "\">Name</label>\n";
+                        echo "<input type=\"text\" id=\"resource" . $i . "\" name=\"resource" . $i . "\"";
+                        if(isset($resourceName)) {
+                            echo "\" value=\"" . $resourceName . "\">\n";  
+                        } 
+                        else {
+                            echo ">\n"; 
+                        }
+                        echo "</div>\n";
+                        echo "<div class=\"resource-link\">\n";
+                        echo "<label for=\"resource-link" . $i . "\">Link</label>\n";
+                        echo "<input type=\"text\" id=\"resource-link" . $i . "\" name=\"resourceLink" . $i . "\""; 
+                        if(isset($resourceLink)) {
+                            echo "\" value=\"" . $resourceLink . "\">\n";  
+                        } 
+                        else {
+                            echo ">\n"; 
+                        }
+                        echo "</div>\n";
+                        echo "</div>";
                     }
                     ?>
                 </fieldset>

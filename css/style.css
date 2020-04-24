@@ -1,10 +1,8 @@
-
-
 /* ==========================================================================
    Global Styles
    ========================================================================== */
 
-body {
+   body {
 	font-size: 16px;
 	color: #404a49;
 	font-family: 'Cousine', serif;
@@ -257,6 +255,69 @@ input[type=submit] {
 	text-align: center;
 }
 
+.search-form {
+    display: flex;
+    justify-content: space-around;
+}
+
 .search-form label {
 	display: inline;
+}
+
+.search-form input[type=text] {
+    width: 200px;
+}
+
+fieldset {
+    padding: 30px;
+}
+
+fieldset legend {
+    margin-left: -20px;
+}
+
+.resource-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.resource-name,
+.resource-link {
+    display: inline;
+}
+
+.resource-name label,
+.resource-link label {
+    display: inline;
+}
+
+.resource-name input[type=text],
+.resource-link input[type=text] {
+    width: 250px;
+}
+
+.tag-block,
+.tag-list,
+.entry-links {
+    display: flex;
+    justify-content: center;
+}
+
+.tag-list,
+.entry-links {
+    list-style: none;
+}
+
+.entry-links li {
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+.tag-list li {
+    margin-right: 10px;
+    /* font-size: .75em; */
+}
+
+.tag-list li a {
+    border-bottom: none;
 }

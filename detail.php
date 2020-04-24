@@ -69,15 +69,22 @@ if ($validEntry) {
     <div class="edit">
         <!-- TODO: Send the id to the edit page so form is pre-populated with existing info -->
         <!-- <p><a href="edit.php">Edit Entry</a></p> -->
-        <div class="entry-buttons">
-            <form action="edit.php?id=<?php echo $id; ?>" method="post">
-                <button class="button">Edit Entry</button>
-            </form>
-            <br>            
-            <form action="#" method=post>
-                <button class="button">Delete Entry</button>
-            </form>
-        </div>
+        <div>
+            <ul class="entry-links">
+            <?php   
+            echo "<li><a href=\"edit.php?id=" . $id . "\">Edit Entry</a></li>\n";
+            echo "<li><a href=\"#\">Delete Entry</a></li>\n";
+            // echo "<form action=\"edit.php?id=" . $id . "\" method=\"get\">\n";
+            // echo "<button class=\"button\">Edit Entry</button>\n";
+            // echo "</form>\n";
+            // echo "<br>\n";            
+            // echo "<form action=\"#\" method=\"post\">\n";
+            // echo "<button class=\"button\">Delete Entry</button>\n";
+            // echo "</form>";
+        ?>
+            </ul>
+        
+        </div> <!-- end entry-buttons class -->
     </div>
 </section>
 
