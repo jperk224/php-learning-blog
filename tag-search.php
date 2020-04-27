@@ -70,7 +70,7 @@ if ($currentPage < 1) {
                     <p>Page: </p>
                     <ul>
                         <?php
-                        // TODO: ADD Pagination arrows and limit count exposed for scpace constraints
+                        // TODO: ADD Pagination arrows and limit count exposed for scpace constraints, future enhancement...
                         renderPaginationLinks("tag-search", $currentPage, $totalPages, $tagId);
                         ?>
                     </ul>

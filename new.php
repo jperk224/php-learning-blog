@@ -76,7 +76,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = "resourceLink" . $i;
         $resourceName = trim(filter_input(INPUT_POST, $resource, FILTER_SANITIZE_STRING));
         $resourceLink = trim(filter_input(INPUT_POST, $link, FILTER_SANITIZE_STRING));  
-        // TODO: This doesn't validate whether it's a valid link format ^^
+        // TODO: This doesn't validate whether it's a valid link format, future enhancement...
         $resources[] = [$resourceName, $resourceLink];
     }
 
@@ -90,7 +90,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $id = -1;
         // names don't have to be unique, but links do, so we'll check for uniqueness if there's a link
         // there may be a name discrepency.  For now, keep the name currently in the DB
-        // TODO: Edit name for an existing link?
+        // TODO: Edit name for an existing link? future enhancement...
         if(!empty($resource[1])) {
             if(resourceExists($resource[1])) {
                 $id = getResourceIdByLink($resource[1]);

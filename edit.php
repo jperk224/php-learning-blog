@@ -54,7 +54,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
     foreach($existingTags as $tag) {
         $tagStringArray[] = $tag["name"];
     }
-    $tags = implode(" ", $tagStringArray);  //TODO: prepend with # for visual?
+    $tags = implode(" ", $tagStringArray);
 }
 
 // POST logic -- assume successful POST!
@@ -104,7 +104,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $link = "resourceLink" . $i;
         $resourceName = trim(filter_input(INPUT_POST, $resource, FILTER_SANITIZE_STRING));
         $resourceLink = trim(filter_input(INPUT_POST, $link, FILTER_SANITIZE_STRING));  
-        // TODO: This doesn't validate whether it's a valid link format ^^
+        // TODO: This doesn't validate whether it's a valid link format ^^, future enhancement?
         $resources[] = [$resourceName, $resourceLink];
     }
 
@@ -118,7 +118,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
         $id = -1;
         // names don't have to be unique, but links do, so we'll check for uniqueness if there's a link
         // there may be a name discrepency.  For now, keep the name currently in the DB
-        // TODO: Edit name for an existing link?
+        // TODO: Edit name for an existing link? Future enhancement...
         if(!empty($resource[1])) {
             if(resourceExists($resource[1])) {
                 $id = getResourceIdByLink($resource[1]);
@@ -170,7 +170,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     else {
         // Delete the journal from the DB before adding back with new field values
         // TODO: On Delete cascade appears to work fine directly in SQLite, but not through 
-        // the PDO object; workaround is to explicitly remove entry_resources
+        // the PDO object, even when explicity turning on Foreign keys; workaround is to explicitly remove entry_resources
         // and entry_tags before delteing journal entry from the DB
         if (deleteJournalResources($journalId) && deleteJournalTags($journalId) && deleteJournalEntry($journalId)) {
             // Add the journal entry with edited values back to the DB
