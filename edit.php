@@ -54,7 +54,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET") {
     foreach($existingTags as $tag) {
         $tagStringArray[] = $tag["name"];
     }
-    $tags = implode(" ", $tagStringArray);
+    $tags = implode(" ", $tagStringArray);  //TODO: prepend with # for visual?
 }
 
 // POST logic -- assume successful POST!
@@ -66,6 +66,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
     $whatILearned = trim(filter_input(INPUT_POST, "whatILearned", FILTER_SANITIZE_STRING));
     $date = trim(filter_input(INPUT_POST, "date", FILTER_SANITIZE_STRING));
     $tags = trim(filter_input(INPUT_POST, "tags", FILTER_SANITIZE_STRING));
+    $journalId = filter_input(INPUT_GET, "id", FILTER_SANITIZE_NUMBER_INT);
 
     // turn the tags into an array of elements that can be stored in the DB
     // strip the # so as to store the tag w/o it
@@ -128,14 +129,14 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 $id = getResourceIdByLink($resource[1]);
             }
         }
-        else {  // use the name to add the resource to the DB and get the id
-                // add the resouce to the DB by name
+        else {  // no link, so use the name to add the resource to the DB and get the id
+            // add the resouce to the DB by name
             if(!empty($resource[0])) {
                 addResource($resource[0], $resource[1]);
                 $id = getResourceIdByName($resource[0]);
             }
         }
-        // add the id to the resource Id array if not -1
+        // add the id to the resource Id array if not -1 (-1 indicates no resource in the form)
         if($id != -1) {
             $resourceIds[] = $id;
         }
@@ -166,53 +167,54 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             $error_message = "Didn't you learn something? It's required.";
         }
     }
-    // NOTE: This is the only place unique journal title entries are currently enforced
-    elseif(!uniqueTitle($title)) {
-        $error_message = "Entry title already exists.  Title must be unique.";
-    }
     else {
-        // Add the journal entry to the DB
-        if  (addJournalEntry($title, $date, $timeSpent, $whatILearned)) {  // returns true if journal entry added
-            $addResource = true;
-            // get the journal entry by title
-            $entryId = getIdByTitle($title);
-
-            // add resources to the existing entry if there are resources to add
-            if(count($resourceIds) > 0) {
-                foreach($resourceIds as $id) {
-                    if (addResourceToEntry($entryId, $id)) {
-                        continue;
-                    }
-                    else {
-                        $error_message = "Error adding resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
-                        $addResource = false;
-                        break;
-                    }
-                }
-            }
-
-            // add tags to the existing entry if there are tags to add
-            if(count($tagIds) > 0) {
-                foreach($tagIds as $id) {
-                    if (addTagToEntry($entryId, $id)) {
-                        continue;
-                    }
-                    else {
-                        $error_message = "Error adding resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
-                        $addResource = false;
-                        break;
+        // Delete the journal from the DB before adding back with new field values
+        // TODO: On Delete cascade appears to work fine directly in SQLite, but not through 
+        // the PDO object; workaround is to explicitly remove entry_resources
+        // and entry_tags before delteing journal entry from the DB
+        if (deleteJournalResources($journalId) && deleteJournalTags($journalId) && deleteJournalEntry($journalId)) {
+            // Add the journal entry with edited values back to the DB
+            if (addJournalEntry($title, $date, $timeSpent, $whatILearned)) {  // returns true if journal entry added
+                $addResource = true;
+                // get the journal entry by title
+                $entryId = intval(getIdByTitle($title));
+                // add resources to the existing entry if there are resources to add
+                if (count($resourceIds) > 0) {
+                     foreach ($resourceIds as $id) {
+                        if (addResourceToEntry($entryId, $id)) {
+                             continue;
+                        } else {
+                             $error_message = "Error modifying resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
+                             $addResource = false;
+                             break;
+                        }
                     }
                 }
-            }
-            
+
+                // add tags to the existing entry if there are tags to add
+                if (count($tagIds) > 0) {
+                    foreach ($tagIds as $id) {
+                        if (addTagToEntry($entryId, $id)) {
+                            continue;
+                        } else {
+                            $error_message = "Error modifying tags.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
+                            $addResource = false;
+                            break;
+                        }
+                    }
+                }
+
             // if there was no error, redirect home
-            if($addResource) {  
-                header("location:index.php");
-            }            
+                if ($addResource) {
+                    header("location:index.php");
+                }
+            } else {
+                $error_message = "Error editing journal entry.";
+            }
         }
         else {
-            $error_message = "Error adding journal entry.";
-        }
+            $error_message = "Error editing journal entry.";
+        }       
     }
 }
 
@@ -228,7 +230,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<h3 style=\"color:red; text-align:center\">" . $error_message . "</h3><br>";
                 }
             ?>
-            <form method="post" action="new.php">
+        <?php echo "<form method=\"post\" action=\"edit.php?id=" . $journalId . "\">"; ?>
+            <!-- <form method="post" action="edit.php?id="> -->
                 <label for="title">Title</label>
                 <input id="title" type="text" name="title"
                  value="<?php echo htmlspecialchars($title, ENT_NOQUOTES, 'UTF-8'); ?>"><br> <!-- TODO: ENT_NOQUOTES NOT working -->
@@ -282,8 +285,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 <br>
                 <label for="tag-input">Tags</label>
                 <textarea id="tags" rows="2" name="tags"><?php echo htmlspecialchars($tags); ?></textarea>
-                <input type="submit" value="Publish Entry" class="button">
-                <a href="index.php" class="button button-secondary">Cancel</a>
+                <input type="submit" value="Publish Edits" class="button">
+                <a href="detail.php?id=<?php echo $journalId; ?>" class="button button-secondary">Cancel</a>
             </form>
         </div>
     </div>

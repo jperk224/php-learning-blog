@@ -171,7 +171,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                         continue;
                     }
                     else {
-                        $error_message = "Error adding resources.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
+                        $error_message = "Error adding tags.  Please check <a href=\"detail.php?id=" . $entryId . "\">journal entry detail</a>.";
                         $addResource = false;
                         break;
                     }

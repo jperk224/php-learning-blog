@@ -539,12 +539,44 @@ function getJournalCountByTagId($tagId)
         return $results->fetchColumn(0);
 }
 
-// Delete resources for an existing entry (for the 'edit' entry workflow)
+// Delete journal entry (DB on delete cascade will handle linking table entries)
 function deleteJournalEntry($id) {
     include("inc/connection.php");
     try {
         $sql = "DELETE FROM entries
                 WHERE id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
+
+function deleteJournalResources($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "DELETE FROM entry_resources
+                WHERE entry_id = :id";
+        $results = $db->prepare($sql);
+        $results->bindParam(':id', $id, PDO::PARAM_INT);
+        $results->execute();
+    }
+    catch(Exception $e) {
+        echo $e->getMessage() . "<br>";
+        return false;
+    }
+    return true;
+}
+
+function deleteJournalTags($id) {
+    include("inc/connection.php");
+    try {
+        $sql = "DELETE FROM entry_tags
+                WHERE entry_id = :id";
         $results = $db->prepare($sql);
         $results->bindParam(':id', $id, PDO::PARAM_INT);
         $results->execute();

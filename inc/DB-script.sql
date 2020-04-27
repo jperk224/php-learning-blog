@@ -35,7 +35,7 @@ CREATE TABLE tags(
 CREATE TABLE entry_resources(
     entry_id INTEGER NOT NULL,
     resource_id INTEGER NOT NULL,
-    UNIQUE(entry_id, resource_id)
+    UNIQUE(entry_id, resource_id),
     CONSTRAINT fk_column1
     FOREIGN KEY (entry_id)
     REFERENCES entries (id)
@@ -51,7 +51,7 @@ CREATE TABLE entry_resources(
 CREATE TABLE entry_tags(
     entry_id INTEGER NOT NULL,
     tag_id INTEGER NOT NULL,
-    UNIQUE(entry_id, tag_id)
+    UNIQUE(entry_id, tag_id),
     CONSTRAINT fk_column1
     FOREIGN KEY (entry_id)
     REFERENCES entries (id)
