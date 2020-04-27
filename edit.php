@@ -234,15 +234,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- <form method="post" action="edit.php?id="> -->
                 <label for="title">Title</label>
                 <input id="title" type="text" name="title"
-                 value="<?php echo htmlspecialchars($title, ENT_NOQUOTES, 'UTF-8'); ?>"><br> <!-- TODO: ENT_NOQUOTES NOT working -->
+                 value="<?php echo htmlspecialChars($title); ?>"><br>
                 <label for="date">Date</label>
                 <input id="date" type="date" name="date"
-                value="<?php echo htmlspecialchars($date /*default escape , default encoding (UTF-8)*/); ?>"><br>
+                value="<?php echo htmlspecialchars($date); ?>"><br>
                 <label for="time-spent"> Time Spent</label>
                 <input id="time-spent" type="text" name="timeSpent"
-                value="<?php echo htmlspecialchars($timeSpent /*default escape , default encoding (UTF-8)*/); ?>"><br>
+                value="<?php echo htmlspecialchars($timeSpent); ?>"><br>
                 <label for="what-i-learned">What I Learned</label>
-                <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo htmlspecialchars($whatILearned /*default escape , default encoding (UTF-8)*/); ?></textarea>
+                <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo htmlspecialchars($whatILearned); ?></textarea>
                 <fieldset>
                     <legend>Resources To Remember</legend>
                     <?php 
