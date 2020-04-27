@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "My Journal | Entry Detail";
+$pageTitle = "My Journal | Delete Entry";
 
 include("inc/header.php");
 
@@ -38,40 +38,41 @@ if ($validEntry) {
                     renderTags($tags);
                 }
                 ?>
-                <div class="entry">
+                <!-- <div class="entry">
                     <h3>Time Spent: </h3>
-                    <p><?php echo $journalEntry["time_spent"]; ?></p>
+                    <p><?php // echo $journalEntry["time_spent"]; ?></p>
                 </div>
                 <div class="entry">
                     <h3>What I Learned:</h3>
-                    <p><?php echo $journalEntry["learned"]; ?></p>
+                    <p><?php // echo $journalEntry["learned"]; ?></p>
                 </div>
                 <div class="entry">
                     <?php
-                    $entryResources = getJournalEntryResources($id);
-                    if (sizeof($entryResources) > 0) {
-                        echo "<h3>Resources to Remember:</h3>";
-                        echo "<ul>";
-                        foreach ($entryResources as $resource) {
-                            if (!empty($resource["link"])) {
-                                echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
-                            } else {
-                                echo "<li>" . $resource["name"] . "</li>";
-                            }
-                        }
-                        echo "</ul>";
-                    }
+                    // $entryResources = getJournalEntryResources($id);
+                    // if (sizeof($entryResources) > 0) {
+                    //     echo "<h3>Resources to Remember:</h3>";
+                    //     echo "<ul>";
+                    //     foreach ($entryResources as $resource) {
+                    //         if (!empty($resource["link"])) {
+                    //             echo "<li><a href=\"" . $resource["link"] . "\" target=\"_blank\">" . $resource["name"] . "</a></li>";
+                    //         } else {
+                    //             echo "<li>" . $resource["name"] . "</li>";
+                    //         }
+                    //     }
+                    //     echo "</ul>";
+                    // }
                     ?>
-                </div>
+                </div> -->
             </article>
         </div>
     </div>
     <div class="edit">
         <div>
-            <ul class="entry-links">
+            <h4>Are you Sure You Want to Delete This Entry?</h4>
+            <ul class="entry-links" style="padding-left:0">
             <?php   
-            echo "<li><a href=\"edit.php?id=" . $id . "\">Edit Entry</a></li>\n";
-            echo "<li><a href=\"delete.php?id=" . $id . "\">Delete Entry</a></li>\n";
+            echo "<li><a href=\"index.php?deleteId=" . $id . "\">Yes</a></li>\n";
+            echo "<li><a href=\"detail.php?id=" . $id . "\">No</a></li>\n";
             ?>
             </ul>
         </div>

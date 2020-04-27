@@ -4,6 +4,7 @@ $pageTitle = "My Journal | Home";
 $itemsPerPage = 5;  // fixed count for display pagination
 $searchQuery = '';  // to drive search results, if set results returned will
                     // match SQL 'like'
+$errorMessage = '';
 
 include("inc/header.php");
 
@@ -18,6 +19,18 @@ if (isset($_GET["page"])) {
 // GET variable is search is used
 if (isset($_GET["searchQuery"])) {
     $searchQuery = filter_input(INPUT_GET, "searchQuery", FILTER_SANITIZE_STRING);  // remove potential HTML tags
+}
+
+// GET variable for deleting record
+if (isset($_GET["deleteId"])) {
+    $deleteId = filter_input(INPUT_GET, "deleteId", FILTER_SANITIZE_NUMBER_INT);
+    if (deleteJournalResources($deleteId) && deleteJournalTags($deleteId) && deleteJournalEntry($deleteId)) {
+        header("location:index.php");   // redirect home to load index with fresh set of entries
+    }
+    else {
+        $errorMessage = "Error deleting journal entry.";
+    }
+
 }
 
 // If there is no page variable in the query string, current page is empty, 
@@ -63,6 +76,7 @@ if ($currentPage < 1) {
 <section>
     <div class="container">
         <div class="entry-list">
+        <h3><?php echo $errorMessage; ?></h3>
             <div class="entry-header">
                 <div class="pagination-links">
                     <p>Page: </p>
