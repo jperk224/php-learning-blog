@@ -234,7 +234,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- <form method="post" action="edit.php?id="> -->
                 <label for="title">Title</label>
                 <input id="title" type="text" name="title"
-                 value="<?php echo htmlspecialChars($title); ?>"><br>
+                 value="<?php echo htmlspecialChars($title, ENT_NOQUOTES); ?>"><br>
                 <label for="date">Date</label>
                 <input id="date" type="date" name="date"
                 value="<?php echo htmlspecialchars($date); ?>"><br>
