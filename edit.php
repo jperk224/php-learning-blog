@@ -234,15 +234,15 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
             <!-- <form method="post" action="edit.php?id="> -->
                 <label for="title">Title</label>
                 <input id="title" type="text" name="title"
-                 value="<?php echo htmlspecialChars($title, ENT_NOQUOTES); ?>"><br>
+                 value="<?php echo $title; ?>"><br>
                 <label for="date">Date</label>
                 <input id="date" type="date" name="date"
-                value="<?php echo htmlspecialchars($date); ?>"><br>
+                value="<?php echo $date; ?>"><br>
                 <label for="time-spent"> Time Spent</label>
                 <input id="time-spent" type="text" name="timeSpent"
-                value="<?php echo htmlspecialchars($timeSpent); ?>"><br>
+                value="<?php echo $timeSpent; ?>"><br>
                 <label for="what-i-learned">What I Learned</label>
-                <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo htmlspecialchars($whatILearned); ?></textarea>
+                <textarea id="what-i-learned" rows="5" name="whatILearned"><?php echo $whatILearned; ?></textarea>
                 <fieldset>
                     <legend>Resources To Remember</legend>
                     <?php 
@@ -284,7 +284,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST") {
                 </fieldset>
                 <br>
                 <label for="tag-input">Tags</label>
-                <textarea id="tags" rows="2" name="tags"><?php echo htmlspecialchars($tags); ?></textarea>
+                <textarea id="tags" rows="2" name="tags"><?php echo $tags; ?></textarea>
                 <input type="submit" value="Publish Edits" class="button">
                 <a href="detail.php?id=<?php echo $journalId; ?>" class="button button-secondary">Cancel</a>
             </form>
